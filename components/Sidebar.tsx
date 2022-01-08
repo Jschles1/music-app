@@ -17,6 +17,7 @@ import {
     MdPlaylistAdd,
     MdFavorite,
 } from 'react-icons/md';
+import { usePlaylist } from '../lib/hooks';
 
 // TODO: Create sidebar menu group component
 
@@ -51,9 +52,9 @@ const musicMenu = [
     },
 ];
 
-const playlists = new Array(30).fill(1).map((_, i) => `Playlist ${i + 1}`);
-
 const Sidebar = () => {
+    const { playlists, isLoading, isError } = usePlaylist();
+
     return (
         <Box
             width="100%"
@@ -123,10 +124,10 @@ const Sidebar = () => {
                 <Box height="79%" overflowY="auto" paddingY="20px">
                     <List spacing={2}>
                         {playlists.map((playlist) => (
-                            <ListItem key={playlist} paddingX="20px">
+                            <ListItem key={playlist.id} paddingX="20px">
                                 <LinkBox>
                                     <NextLink href="/" passHref>
-                                        <LinkOverlay>{playlist}</LinkOverlay>
+                                        <LinkOverlay>{playlist.name}</LinkOverlay>
                                     </NextLink>
                                 </LinkBox>
                             </ListItem>
