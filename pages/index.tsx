@@ -1,7 +1,8 @@
 import { Box } from '@chakra-ui/layout';
 import GradientLayout from '../components/GradientLayout';
+import prisma from '../lib/prisma';
 
-export default function Home() {
+const Home = ({ artists }) => {
     return (
         <GradientLayout
             roundImage
@@ -14,4 +15,13 @@ export default function Home() {
             <Box>hello</Box>
         </GradientLayout>
     );
-}
+};
+
+export const getServerSideProps = async () => {
+    const artists = await prisma.artist.findMany({});
+    return {
+        props: { artists },
+    };
+};
+
+export default Home;
