@@ -1,5 +1,6 @@
 import { Box } from '@chakra-ui/layout';
 import GradientLayout from '../../components/GradientLayout';
+import SongTable from '../../components/SongsTable';
 import { validateToken } from '../../lib/auth';
 import prisma from '../../lib/prisma';
 
@@ -20,13 +21,13 @@ const Playlist = ({ playlist }) => {
             description={`${playlist.songs.length} songs`}
             image={`https://picsum.photos/400?random=${playlist.id}`}
         >
-            <Box></Box>
+            <SongTable />
         </GradientLayout>
     );
 };
 
 export const getServerSideProps = async ({ query, req }) => {
-    const { id } = validateToken(req.cookie.ACCESS_TOKEN);
+    const { id } = validateToken(req.cookies.ACCESS_TOKEN);
     const [playlist] = await prisma.playlist.findMany({
         where: { id: +query.id, userId: id },
         include: {
