@@ -21,6 +21,7 @@ import {
     MdOutlineRepeat,
 } from 'react-icons/md';
 import { useStoreActions } from 'easy-peasy';
+import { formatTime } from '../lib/formatters';
 
 const Player = ({ songs, activeSong }) => {
     const [playing, setPlaying] = useState(false);
@@ -70,17 +71,34 @@ const Player = ({ songs, activeSong }) => {
         } else {
             nextSong();
         }
-    }
+    };
 
     const onLoad = () => {
         const songDuration = soundRef.current.duration();
         setDuration(songDuration);
-    }
+    };
 
     const onSeek = (e) => {
         setSeek(parseFloat(e[0]));
-        soundRef.current.seek(e[0])
+        soundRef.current.seek(e[0]);
     };
+
+    useEffect(() => {
+        let timerId;
+
+        if (playing && !isSeeking) {
+            const f = () => {
+                setSeek(soundRef.current.seek());
+                timerId = requestAnimationFrame(f);
+            };
+
+            timerId = requestAnimationFrame(f);
+
+            return () => cancelAnimationFrame(timerId);
+        }
+
+        cancelAnimationFrame(timerId);
+    }, [playing, isSeeking]);
 
     return (
         <Box>
@@ -161,7 +179,7 @@ const Player = ({ songs, activeSong }) => {
             <Box color="gray.600">
                 <Flex justify="center" align="center">
                     <Box width="10%">
-                        <Text fontSize="xs">1:21</Text>
+                        <Text fontSize="xs">{formatTime(seek)}</Text>
                     </Box>
                     <Box width="80%">
                         <RangeSlider
@@ -182,7 +200,7 @@ const Player = ({ songs, activeSong }) => {
                         </RangeSlider>
                     </Box>
                     <Box width="10%" textAlign="right">
-                        <Text fontSize="xs">3:21</Text>
+                        <Text fontSize="xs">{formatTime(duration)}</Text>
                     </Box>
                 </Flex>
             </Box>
